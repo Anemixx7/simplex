@@ -1,0 +1,136 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    width: 20vw;
+  }
+}
+
+.App-header {
+  background: linear-gradient(90deg, #5243b7 0%, #25bdca 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.container {
+  background-color: #e9ecef;
+  padding: 3vw;
+  border-radius: 5px;
+  box-shadow: #000 1px 0px 3px;
+  .title {
+    font-size: 2vw;
+    color: #212529;
+    font-weight: 600;
+  }
+  .card {
+    background-color: white;
+    padding: 2vw;
+    width: 40vw;
+    border: 1px solid #757575;
+    margin-bottom: 1vw;
+    .pCard {
+      width: 100%;
+      font-size: 1.5vw;
+      text-align: left;
+    }
+    .inputs {
+      border-top: 1px solid #757575;
+      padding: 1vw;
+      .ctminput {
+        display: flex;
+        height: 3vw;
+        margin-bottom: 0.5vw;
+        border-radius: 5px;
+        label {
+          font-size: 1.3vw;
+          font-weight: 600;
+          color: #212529;
+          border: 1px solid #757575;
+          width: 8%;
+          height: 105%;
+          background-color: #e4e4e4;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #696969;
+          border-bottom-left-radius: 5px;
+          border-top-left-radius: 5px;
+        }
+        input {
+          width: 92%;
+          height: 100%;
+          font-size: 1.2vw;
+          color: #212529;
+          border: 1px solid #757575;
+          padding-left: 1vw;
+          border-bottom-right-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+      }
+      .targetfunction {
+        display: flex;
+        flex-direction: column;   
+        border-radius: 5px;
+        .titleRestri {
+          font-size: 2vw;
+          color: #212529;
+          margin-bottom: 0.3vw;
+          margin-top: 0 ;
+        }
+        .divTarget {
+          display: flex;
+          height: 3vw;
+          width: 20%;
+          margin-bottom: 0.5vw;
+          label {
+            font-size: 1.3vw;
+            font-weight: 600;
+            color: #212529;
+            border: 1px solid #757575;
+            width: 50%;
+            height: 105%;
+            background-color: #e4e4e4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #696969;
+          }
+          input {
+            width: 50%;
+            height: 100%;
+            font-size: 1.2vw;
+            color: #212529;
+            border: 1px solid #757575;
+            padding-left: 1vw;
+          }
+        }
+      }
+    }
+  }
+}

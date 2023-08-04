@@ -22,7 +22,7 @@ const Rest = (props) => {
       <div style={{ display: 'flex', marginBottom: '1vw', flexWrap: 'wrap', justifyContent: 'center' }}>
         {props.values.map((d, i) => {
           return (
-            d.desc !== "" && <div className='divTarget' style={{ width: i + 2 >= props.values.length ? '37%' : '20%' }}>
+            d.desc !== "" && <div className='divTarget' key={i} style={{ width: i + 2 >= props.values.length ? '37%' : '20%' }}>
               <CtmInput
                 key={i}
                 value={d.value}
@@ -52,6 +52,7 @@ function App() {
   const [hasDeletedRestri, setHasDeletedRestri] = useState(false);
   const [restriVars, setRestriVars] = useState([]);
   const [tar, setTar] = useState({});
+  const [result, setResult] = useState(false);
 
   useEffect(() => {
     setRestriVars(
@@ -70,7 +71,6 @@ function App() {
       }))
     );
   }, [vars]);
-  console.log(tar)
 
   useEffect(() => {
     if (vars.every(v => v.desc !== "")) {
@@ -92,13 +92,12 @@ function App() {
     }
   }, [restri, hasDeleted]);
 
-
   return (
     <div className="App">
       <div className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <div className='container'>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%',marginBottom:'-2vw' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '-2vw' }}>
             <p style={{ width: '10vw', fontSize: '1vw', color: '#212529' }}>
               Desarrollado por los estudiantes:
               <p>OSCAR MAURICIO MOJICA ZAMBRANO</p>
@@ -190,6 +189,92 @@ function App() {
               })}
             </div>
           </div>
+          <button
+            style={{ width: '10vw', height: '3vw', fontSize: '1vw', marginBottom: '2vw' }}
+            onClick={() => {
+              const constraints = {};
+              for (const constraint of restriVars) {
+                if (constraint.desc) {
+                  const key = constraint.desc;
+                  for (const variable of constraint.vars) {
+                    if (!variable.desc) {
+                      const value = Number(variable.value);
+                      constraints[key] = { max: value };
+                    }
+                  }
+                }
+              }
+              const variables = {};
+              for (const variable of tar) {
+                if (variable.desc) {
+                  const key = variable.desc;
+                  const value = Number(variable.value);
+                  variables[key] = { profit: value };
+                }
+              }
+              for (const constraint of restriVars) {
+                if (constraint.desc) {
+                  const constraintKey = constraint.desc;
+                  for (const variable of constraint.vars) {
+                    if (variable.desc) {
+                      const variableKey = variable.desc;
+                      const value = Number(variable.value);
+                      if (!variables[variableKey]) {
+                        variables[variableKey] = {};
+                      }
+                      variables[variableKey][constraintKey] = value;
+                    }
+                  }
+                }
+              }
+              const ints = {};
+              for (const value of vars) {
+                if (value.desc) {
+                  const key = value.desc;
+                  ints[key] = 1;
+                }
+              }
+              const model = {
+                "optimize": "profit",
+                "opType": "max",
+                "constraints": constraints,
+                "variables": variables,
+                "ints": ints
+              }
+              fetch('http://localhost:3001/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(model)
+              })
+                .then(response => response.json())
+                .then(result => {
+                  setResult(result);
+                });
+            }}>
+            Calcular
+          </button>
+          {result ? <div className='card title'>
+            <p className='pCard'>Solucion</p>
+            <ul>
+              <li>Factible: {result.feasible.toString()}</li>
+              <li>Resultado: {result.result}</li>
+              <li>Acotado: {result.bounded.toString()}</li>
+              <li>Integral: {result.isIntegral.toString()}</li>
+              {vars.map(field => {
+                if (field.desc && result.hasOwnProperty(field.desc)) {
+                  return <li key={field.desc}>{field.desc.charAt(0).toUpperCase() + field.desc.slice(1)}: {result[field.desc]}</li>;
+                }
+                return null;
+              })}
+            </ul>
+          </div>
+            :
+            result && result.feasible === false &&
+            <div className='card title'>
+              <p className='pCard'>Sin solución factible</p>
+            </div>}
         </div>
       </div>
     </div>

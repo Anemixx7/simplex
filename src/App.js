@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import logoU from './R.png';
 import './App.scss';
 import { createRef, useEffect, useRef, useState } from 'react';
 
@@ -14,22 +15,28 @@ const CtmInput = (props) => {
   )
 }
 
-const TargetFunction = (props) => {
+const Rest = (props) => {
   return (
-    <div className='targetfunction'>
+    <div className='Rest'>
       <p className='titleRestri'>{props.value}</p>
-      <div style={{ display: 'flex', marginBottom: '1vw', flexWrap: 'wrap', justifyContent:'center' }}>
+      <div style={{ display: 'flex', marginBottom: '1vw', flexWrap: 'wrap', justifyContent: 'center' }}>
         {props.values.map((d, i) => {
           return (
-            d.desc !== "" && <div className='divTarget'>
+            d.desc !== "" && <div className='divTarget' style={{ width: i + 2 >= props.values.length ? '37%' : '20%' }}>
               <CtmInput
                 key={i}
                 value={d.value}
                 number={i}
-                restri
                 onChange={e => props.onChange(i, e.target.value)}
               />
               {i + 2 < props.values.length && <label>+</label>}
+              {i + 2 >= props.values.length && <label>{props.isTar ? "=> MAX" : ">="}</label>}
+              {i + 2 >= props.values.length && !props.isTar &&
+                <input
+                  style={{ width: '3vw' }}
+                  value={props.value1}
+                  onChange={e => props.onChange1(i, e.target.value)}></input>
+              }
             </div>
           )
         })}
@@ -44,6 +51,7 @@ function App() {
   const [hasDeleted, setHasDeleted] = useState(false);
   const [hasDeletedRestri, setHasDeletedRestri] = useState(false);
   const [restriVars, setRestriVars] = useState([]);
+  const [tar, setTar] = useState({});
 
   useEffect(() => {
     setRestriVars(
@@ -54,7 +62,15 @@ function App() {
     );
   }, [restri, vars]);
 
-  console.log(restriVars)
+  useEffect(() => {
+    setTar(
+      vars.map(r => ({
+        desc: r.desc,
+        value: ""
+      }))
+    );
+  }, [vars]);
+  console.log(tar)
 
   useEffect(() => {
     if (vars.every(v => v.desc !== "")) {
@@ -82,6 +98,14 @@ function App() {
       <div className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <div className='container'>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%',marginBottom:'-2vw' }}>
+            <p style={{ width: '10vw', fontSize: '1vw', color: '#212529' }}>
+              Desarrollado por los estudiantes:
+              <p>OSCAR MAURICIO MOJICA ZAMBRANO</p>
+              <p>LEONEL OSWALDO TORRES</p>
+            </p>
+            <img src={logoU} style={{ width: '10vw', height: '8vw' }} />
+          </div>
           <p className='title'>Configuramos el modelo</p>
           <div className='card'>
             <p className='pCard title'>Variables</p>
@@ -121,11 +145,27 @@ function App() {
             </div>
           </div>
           <div className='card title'>
+            <p className='pCard'>Función objetivo</p>
+            <div className='inputs'>
+              <Rest
+                values={vars}
+                isTar
+                onChange={(j, newValue) => {
+                  setTar(prevTar => {
+                    const newTar = [...prevTar];
+                    newTar[j].value = newValue;
+                    return newTar;
+                  });
+                }}
+              />
+            </div>
+          </div>
+          <div className='card title'>
             <p className='pCard'>Restricciones</p>
             <div className='inputs'>
               {restri.map((d, i) => {
                 return (
-                  d.desc !== "" && <TargetFunction
+                  d.desc !== "" && <Rest
                     key={i}
                     value={d.desc}
                     number={i}
@@ -134,6 +174,14 @@ function App() {
                       setRestriVars(prevRestriVars => {
                         const newRestriVars = [...prevRestriVars];
                         newRestriVars[i].vars[j].value = newValue;
+                        return newRestriVars;
+                      });
+                    }}
+                    value1={restriVars[i].vars[vars.length - 1].value}
+                    onChange1={(j, newValue) => {
+                      setRestriVars(prevRestriVars => {
+                        const newRestriVars = [...prevRestriVars];
+                        newRestriVars[i].vars[vars.length - 1].value = newValue;
                         return newRestriVars;
                       });
                     }}

@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 4000;
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -8,6 +8,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 
 app.post('/', express.json(), (req, res) => {
     const solver = require('javascript-lp-solver');
